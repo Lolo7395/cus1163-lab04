@@ -327,9 +327,13 @@ return WEXITSTATUS(status);  // WRONG! Check WIFEXITED first
 Answer all four questions in your submission:
 
 1. What happens to the child's memory when `exec()` is called?
-2. Why do we need both `fork()` and `exec()`? Why not one system call?
-3. What happens if you call `exec()` in the parent process instead of the child?
-4. Why must the child call `exit()` instead of return after a failed `exec()`?
+   - The child’s memory is completely replaced with the new program. It stops being the old process and becomes the new one. If exec works, it never comes back to the old code
+3. Why do we need both `fork()` and `exec()`? Why not one system call?
+   - fork() makes a copy of the process so the parent (the shell) can keep running. exec() lets the child replace itself with the new program. Having two steps gives the shell a chance to set things up before running the command.
+5. What happens if you call `exec()` in the parent process instead of the child?
+   - The shell itself would turn into the command, and you’d lose your shell. You wouldn’t be able to type another command after that.
+7. Why must the child call `exit()` instead of return after a failed `exec()`?
+   - If the child just returns, it will run code meant for the parent, which can cause two shells running at once. Using exit(1) makes sure the child ends right away with an error.
 
 #### Compilation and Execution
 
